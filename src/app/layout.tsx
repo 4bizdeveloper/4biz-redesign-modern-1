@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+// Import your custom application layout shells
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,7 +37,50 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        {/* Next.js compliant raw CSS injection to completely obliterate the Google translate widgets */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              .skiptranslate,
+              #goog-gt-tt,
+              .goog-te-banner-frame,
+              .goog-te-gadget,
+              .goog-te-gadget-simple,
+              .goog-te-menu-value,
+              iframe.goog-te-banner-frame,
+              body > .skiptranslate,
+              [class*="goog-te"],
+              #google_translate_element {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
+                height: 0 !important;
+                width: 0 !important;
+              }
+              body {
+                top: 0 !important;
+                position: static !important;
+              }
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col bg-zinc-950 text-white">
+
+
+        {/* Persistent App Shell Header Navigation System */}
+        <Header />
+
+        {/* Dynamic Route Viewport Workspace Wrapper */}
+        <main className="flex-1 flex flex-col w-full">
+          {children}
+        </main>
+
+        {/* Responsive Interactive Footer Foundation */}
+        <Footer />
+      </body>
     </html>
   );
 }
