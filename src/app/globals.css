@@ -1,24 +1,83 @@
 @import "tailwindcss";
 
 :root {
-  /* Forced Light Theme Variables */
+  /* ==========================================
+     DESIGN SYSTEM & OPTIMIZATION TOKENS
+     ========================================== */
   --background: #ffffff;
   --foreground: #000000;
+  
+  /* Prevent layout shift during font swaps (GTmetrix/SEO optimization) */
+  font-display: swap;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* Dark mode media query block REMOVED to preserve white theme */
+/* ==========================================
+   PERFORMANCE & RENDERING TUNING
+   ========================================== */
+html {
+  /* Native, jitter-free smooth scrolling behavior */
+  scroll-behavior: smooth;
+  /* Prevent iOS bounce/pull-to-refresh from breaking custom scroll animations */
+  overflow-y: scroll;
+  /* Fix text resizing layout shifts when swapping device orientations */
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Modern optimized fallback font stack to prevent CLS while fonts load */
+  font-family: var(--font-sans);
+  min-height: 100svh; /* Dynamic viewport units prevent mobile address-bar jumpiness */
+  width: 100%;
+  overflow-x: hidden; /* Strict defense wrapper against layout breaking horizontal micro-scrolls */
+  top: 0 !important;
+  
+  /* Text rendering optimizations for SEO readability and high contrast performance */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================
+   ANTI-JERK & HARDWARE ACCELERATION DEFS
+   ========================================== */
+/* Apply layout isolation parameters to anything processing scroll transitions (e.g., Dubai Police Shrink Element) */
+.will-change-scroll-transform {
+  will-change: margin, border-radius, transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Eliminate tap delays on mobile viewports for instant interaction profiles */
+a, button, [role="button"] {
+  touch-action: manipulation;
+}
+
+/* ==========================================
+   CORE RESPONSIVE UTILITIES & FALLBACKS
+   ========================================== */
+/* Dynamic layout fallbacks for legacy browsers lacking svh support */
+@supports not (height: 100svh) {
+  .min-height-fallback {
+    min-height: 100vh;
+  }
+}
+
+/* Content visibility hint for browser off-screen rendering optimization */
+.optimize-paint {
+  content-visibility: auto;
+  contain-intrinsic-size: 100px 500px;
 }
 
 /* ==========================================
@@ -33,8 +92,4 @@ body > .skiptranslate {
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
-}
-
-body {
-  top: 0 !important;
 }
