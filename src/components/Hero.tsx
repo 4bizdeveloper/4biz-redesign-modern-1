@@ -44,13 +44,19 @@ export default function Hero() {
     return () => clearInterval(id);
   }, []);
 
-  // Dubai Police scroll: shell contracts, content never fades
-  const progress           = Math.min(scrollY / 500, 1);
+  // Dubai Police scroll effect processing variables
+  const progress           = Math.min(scrollY / 400, 1);
   const sideMargin         = progress * 32;
   const borderRadiusBottom = progress * 28;
 
   return (
-    <div style={{ background: '#ffffff', minHeight: '100vh' }} className="sticky top-0">
+    <div 
+      style={{ 
+        background: '#ffffff', // Outer surrounding whitespace wrapper layout context preserved perfectly
+        width: '100%',
+        position: 'relative'
+      }}
+    >
       <section
         style={{
           marginLeft:              `${sideMargin}px`,
@@ -60,7 +66,7 @@ export default function Hero() {
           borderBottomRightRadius: `${borderRadiusBottom}px`,
           borderTopLeftRadius:     0,
           borderTopRightRadius:    0,
-          transition:              'margin 0.04s linear, border-radius 0.04s linear',
+          transition:              'margin 0.01s linear, border-radius 0.01s linear',
           willChange:              'margin, border-radius',
           overflow:                'hidden',
           position:                'relative',
@@ -70,15 +76,20 @@ export default function Hero() {
       >
 
         {/* Background Slider */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 pointer-events-none">
           {SLIDES_DATA.map((slide, idx) => (
             <div
               key={idx}
               className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                idx === activeSlide ? 'opacity-30' : 'opacity-0 pointer-events-none'
+                idx === activeSlide ? 'opacity-30' : 'opacity-0'
               }`}
             >
-              <img src={slide.image} alt="" className="w-full h-full object-cover object-top" />
+              <img 
+                src={slide.image} 
+                alt="" 
+                className="w-full h-full object-cover object-top"
+                loading={idx === 0 ? "eager" : "lazy"} // GTmetrix Optimisation: speeds up early paint indices
+              />
             </div>
           ))}
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-zinc-950" />
@@ -98,12 +109,12 @@ export default function Hero() {
           </p>
 
           {/* Slide indicators */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2" role="tablist">
             {SLIDES_DATA.map((_, slideIdx) => (
               <button
                 key={slideIdx}
                 onClick={() => setActiveSlide(slideIdx)}
-                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                className={`h-2 rounded-full transition-all duration-300 cursor-pointer border-none p-0 ${
                   slideIdx === activeSlide ? 'w-6 bg-sky-400' : 'w-2 bg-white/30 hover:bg-white/60'
                 }`}
                 aria-label={`Slide ${slideIdx + 1}`}
@@ -122,18 +133,31 @@ export default function Hero() {
                 <div
                   key={card.id}
                   onMouseEnter={e => {
-                    (e.currentTarget as HTMLDivElement).style.backgroundColor = '#151569';
-                    (e.currentTarget as HTMLDivElement).style.color = '#fff';
+                    const el = e.currentTarget as HTMLDivElement;
+                    el.style.backgroundColor = '#151569';
+                    el.style.color = '#fff';
+                    const svg = el.querySelector('svg');
+                    if (svg) svg.style.color = '#fff';
                   }}
                   onMouseLeave={e => {
-                    (e.currentTarget as HTMLDivElement).style.backgroundColor = 'rgba(255,255,255,0.92)';
-                    (e.currentTarget as HTMLDivElement).style.color = '';
+                    const el = e.currentTarget as HTMLDivElement;
+                    el.style.backgroundColor = 'rgba(255,255,255,0.92)';
+                    el.style.color = '';
+                    const svg = el.querySelector('svg');
+                    if (svg) svg.style.color = '#151569';
                   }}
-                  className={`bg-white/90 backdrop-blur-md text-zinc-900 rounded-xl p-3 sm:p-4 shadow-xl flex flex-col gap-2 group transition-all duration-300 hover:-translate-y-1 cursor-pointer ${
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.92)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  className={`backdrop-blur-md text-zinc-900 rounded-xl p-3 sm:p-4 shadow-xl flex flex-col gap-2 group hover:-translate-y-1 cursor-pointer ${
                     isLastOdd ? 'col-span-2 sm:col-span-1' : ''
                   }`}
                 >
-                  <CardIcon style={{ color: '#151569' }} className="w-5 h-5 sm:w-6 sm:h-6 group-hover:text-white transition-colors shrink-0" />
+                  <CardIcon 
+                    style={{ color: '#151569', transition: 'color 0.3s' }} 
+                    className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" 
+                  />
                   <div>
                     <h3 className="font-bold text-xs sm:text-sm leading-tight mb-0.5 transition-colors">{card.title}</h3>
                     <p className="text-xs opacity-70 leading-snug transition-colors hidden sm:block line-clamp-2">{card.desc}</p>

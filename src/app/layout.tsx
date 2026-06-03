@@ -6,15 +6,16 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap", // GTmetrix performance optimization: Eliminates text flash & layout shift shifts
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap", // GTmetrix performance optimization
 });
 
 export const metadata: Metadata = {
@@ -35,7 +36,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      style={{ scrollBehavior: "smooth" }}
     >
       <head>
         {/* Next.js compliant raw CSS injection to completely obliterate the Google translate widgets */}
@@ -67,14 +69,12 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-zinc-950 text-white">
-
-
+      <body className="w-full min-h-screen bg-zinc-950 text-white overflow-x-hidden block">
         {/* Persistent App Shell Header Navigation System */}
         <Header />
 
-        {/* Dynamic Route Viewport Workspace Wrapper */}
-        <main className="flex-1 flex flex-col w-full">
+        {/* Dynamic Route Viewport Workspace Wrapper - changed to relative block for natural layouts */}
+        <main className="w-full relative clear-both block">
           {children}
         </main>
 
